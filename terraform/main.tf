@@ -1,6 +1,7 @@
 
 resource "random_string" "bucket_name_add" {
   length           = 16
+  upper            = false
   special          = true
   override_special = ".-"
 }
@@ -12,6 +13,13 @@ resource "aws_s3_bucket" "my_bucket" {
   tags = {
     Name = "Cloud Resume Bucket"
   }
+}
+
+resource "aws_s3_bucket_public_access_block" "allow_public_access" {
+  bucket = aws_s3_bucket.my_bucket.id
+
+  block_public_acls       = false
+  block_public_policy     = false
 }
 
 resource "aws_s3_bucket_policy" "public_read_access" {
