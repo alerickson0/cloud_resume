@@ -1,0 +1,5 @@
+# To avoid adding Terraform providers to the repo
+**/.terraform/
+
+# To avoid add the Terraform state file or any backups created
+**/terraform.tfstate*
