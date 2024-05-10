@@ -62,6 +62,8 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   comment             = "CloudFront for my resume site"
   default_root_object = "Alvaro_E_resume.html"
 
+  aliases = [var.site_name, "www.${var.site_name}"]
+
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
@@ -140,6 +142,10 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = aws_acm_certificate.ssl_certificate.arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
+    #cloudfront_default_certificate = true -- Use for testing just CloudFront, but comment out above parameters
   }
+
 }
