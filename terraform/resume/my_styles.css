@@ -21,14 +21,18 @@ div {
   background-color: #2c22bc;
   clear: both;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
 }
 
 .left {
-  height: 1000px;
+  height: 2080px;
   width: 45px;
   background-color: #c8cccc;
   float: left;
-  position: fixed;
+  position: inherit;
 }
 
 .right {
