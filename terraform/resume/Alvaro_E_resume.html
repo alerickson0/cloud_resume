@@ -1,8 +1,9 @@
+<!DOCTYPE html>
 <head>
   <meta charset="UTF-8" />
-  <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge" /> -- Not sure if I need --> 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" type="text/css" href="my_styles.css" />
+  <script type="text/javascript" src="scripts/jquery-3.7.1.min.js"></script>
 </head>
 <div id="header"></div>
 <div class="left"></div>
@@ -96,3 +97,12 @@
 </div>
 <div class="right"></div>
 <div id="footer"></div>
+<script type="text/javascript">
+  $.post({
+    type: 'POST',
+    url: 'https://ewqftyjryd.execute-api.us-west-2.amazonaws.com/staging/updateVisitorCounter',
+    success: function(data) {
+      $( "#footer" ).empty().append( data.replace(/^"(.*)"$/, '$1') );
+    },
+    dataType: 'text'});
+</script>
