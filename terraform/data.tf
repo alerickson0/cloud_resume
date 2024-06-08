@@ -17,3 +17,5 @@ data "aws_iam_policy_document" "public_read_access" {
     ]
   }
 }
+
+data "aws_region" "current" {}
