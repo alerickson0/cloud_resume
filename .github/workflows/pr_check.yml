@@ -1,0 +1,36 @@
+name: PR check
+
+on:
+  pull_request:
+    branches: [ 'main' ]
+    types: [ ready_for_review, opened, reopened, synchronize ]
+
+jobs:
+  tflint:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "TF lint"
+        uses: reviewdog/action-tflint@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          working_directory: "terraform"
+  
+  tf_validate:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.5.7"
+      
+      - name: Terraform init
+        working-directory: ./terraform
+        run: terraform init
+      
+      - name: Terraform validate
+        working-directory: ./terraform
+        run: terraform validate
