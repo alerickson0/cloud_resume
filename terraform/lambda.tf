@@ -166,6 +166,7 @@ resource "aws_iam_policy" "policy_two" {
   })
 }
 
+# checkov:skip=CKV_AWS_272:Do not need code signing for this lambda function
 resource "aws_lambda_function" "updateVisitorCounter_lambda" {
   filename         = data.archive_file.lambda_archive.output_path
   function_name    = "updateVisitorCounter_lambda"
@@ -180,5 +181,5 @@ resource "aws_lambda_function" "updateVisitorCounter_lambda" {
 resource "aws_cloudwatch_log_group" "updateVisitorCounter_lambda" {
   name = "/aws/lambda/${aws_lambda_function.updateVisitorCounter_lambda.function_name}"
 
-  retention_in_days = 30
+  retention_in_days = 90
 }

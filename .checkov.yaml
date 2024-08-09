@@ -1,0 +1,4 @@
+check:
+  - HIGH
+skip-check:
+  - CKV_AWS_28

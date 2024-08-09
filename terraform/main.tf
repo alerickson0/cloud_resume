@@ -31,6 +31,8 @@ resource "aws_s3_bucket_website_configuration" "test_site" {
 resource "aws_s3_bucket_public_access_block" "allow_public_access" {
   bucket = aws_s3_bucket.my_bucket.id
 
+    # checkov:skip=CKV_AWS_53:The bucket is a public static content host
+    # checkov:skip=CKV_AWS_54:The bucket is a public static content host
   block_public_acls       = false
   block_public_policy     = false
 }
