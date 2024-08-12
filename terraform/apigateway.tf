@@ -62,5 +62,5 @@ resource "aws_lambda_permission" "api_gateway" {
 resource "aws_cloudwatch_log_group" "my_api_gw" {
   name = "/aws/my_api_gw/${aws_apigatewayv2_api.update_visitor_vounter_api.name}"
 
-  retention_in_days = 30
+  retention_in_days = 90
 }
