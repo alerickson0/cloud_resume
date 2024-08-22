@@ -28,3 +28,4 @@ jobs:
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_JAVASCRIPT_PRETTIER: false
+          VALIDATE_TERRAFORM_TERRASCAN: false # Either the super-linter/Terrascan is not using my config file

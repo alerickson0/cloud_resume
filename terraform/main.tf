@@ -28,13 +28,20 @@ resource "aws_s3_bucket_website_configuration" "test_site" {
   }
 }
 
+resource "aws_s3_bucket_versioning" "my_bucket_versioning" {
+  bucket = aws_s3_bucket.my_bucket.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
 resource "aws_s3_bucket_public_access_block" "allow_public_access" {
   bucket = aws_s3_bucket.my_bucket.id
 
-    # checkov:skip=CKV_AWS_53:The bucket is a public static content host
-    # checkov:skip=CKV_AWS_54:The bucket is a public static content host
-  block_public_acls       = false
-  block_public_policy     = false
+  # checkov:skip=CKV_AWS_53:The bucket is a public static content host
+  # checkov:skip=CKV_AWS_54:The bucket is a public static content host
+  block_public_acls   = false
+  block_public_policy = false
 }
 
 resource "aws_s3_bucket_policy" "public_read_access" {
@@ -44,12 +51,12 @@ resource "aws_s3_bucket_policy" "public_read_access" {
 
 # To upload all files present in the "resume" folder to my new S3 bucket
 resource "aws_s3_object" "upload_object" {
-  for_each      = fileset("resume/", "**")
-  bucket        = aws_s3_bucket.my_bucket.id
-  key           = each.value
-  source        = "resume/${each.value}"
-  etag          = filemd5("resume/${each.value}")
-  content_type  = "text/html"
+  for_each     = fileset("resume/", "**")
+  bucket       = aws_s3_bucket.my_bucket.id
+  key          = each.value
+  source       = "resume/${each.value}"
+  etag         = filemd5("resume/${each.value}")
+  content_type = "text/html"
 }
 
 resource "aws_cloudfront_response_headers_policy" "my-custom-javascript-response" {
@@ -111,8 +118,8 @@ resource "aws_cloudfront_response_headers_policy" "my_headers_policy" {
 # To updload all files present in the "resume" folder to my new S3 bucket
 resource "aws_cloudfront_distribution" "s3_distribution" {
   origin {
-    domain_name              = aws_s3_bucket.my_bucket.bucket_regional_domain_name
-    origin_id                = local.s3_origin_id
+    domain_name = aws_s3_bucket.my_bucket.bucket_regional_domain_name
+    origin_id   = local.s3_origin_id
   }
 
   enabled             = true
@@ -142,7 +149,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     response_headers_policy_id = aws_cloudfront_response_headers_policy.my_headers_policy.id
   }
 
-    # Cache behavior with precedence 0
+  # Cache behavior with precedence 0
   ordered_cache_behavior {
     path_pattern     = "/content/immutable/*"
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
@@ -181,11 +188,11 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
       }
     }
 
-    min_ttl                = 0
-    default_ttl            = 3600
-    max_ttl                = 86400
-    compress               = true
-    viewer_protocol_policy = "redirect-to-https"
+    min_ttl                    = 0
+    default_ttl                = 3600
+    max_ttl                    = 86400
+    compress                   = true
+    viewer_protocol_policy     = "redirect-to-https"
     response_headers_policy_id = aws_cloudfront_response_headers_policy.my_headers_policy.id
   }
 
