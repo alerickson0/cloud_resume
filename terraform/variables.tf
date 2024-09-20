@@ -1,15 +1,15 @@
 # Which region will AWS use
 variable "region" {
-  type = string
+  type    = string
   default = "us-east-1"
 }
 
 variable "site_name" {
-  type = string
+  type        = string
   description = "The domain or site to use"
 }
 
 variable "ttl" {
-  type = number
+  type    = number
   default = 60
 }

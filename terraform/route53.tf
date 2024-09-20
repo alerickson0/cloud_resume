@@ -41,5 +41,5 @@ resource "aws_route53_record" "my_validation_record" {
   records         = [each.value.record]
   type            = each.value.type
   zone_id         = aws_route53_zone.primary.zone_id
-  ttl             = 60
+  ttl             = var.ttl
 }

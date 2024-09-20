@@ -2,9 +2,9 @@
 data "aws_iam_policy_document" "public_read_access" {
   statement {
     principals {
-	  type        = "*"
-	  identifiers = ["*"]
-	}
+      type        = "*"
+      identifiers = ["*"]
+    }
 
     actions = [
       "s3:GetObject",
