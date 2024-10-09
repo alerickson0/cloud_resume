@@ -14,6 +14,12 @@ terraform {
     }
   }
 
+  backend "s3" {
+    bucket = "terraform-state-remote-back-end"
+    key    = "network/terraform.tfstate"
+    region = "us-east-1"
+  }
+
   required_version = "~> 1.5.7"
 }
 
