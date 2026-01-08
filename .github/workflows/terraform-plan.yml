@@ -1,0 +1,86 @@
+name: 'Terraform-Plan'
+
+# yamllint disable-line rule:truthy
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - terraform/**
+
+env:
+  #TODO: Review if any of them are needed
+  # verbosity setting for Terraform logs
+  TF_LOG: INFO
+  # Credentials for deployment to AWS (Use a SA account instead?)
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  # S3 bucket for the Terraform state
+  BUCKET_TF_STATE: ${{ secrets.BUCKET_TF_STATE}}
+
+
+permissions:
+  contents: read
+  packages: read
+  # To report GitHub Actions status checks
+  statuses: write
+  pull-requests: write
+
+jobs:
+  Terraform-Plan:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        shell: bash
+        # Keep Terraform files in the terraform dir
+        working-directory: ./terraform
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup Terraform with specified version on the runner
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: 1.5.7
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Plan
+        continue-on-error: true
+        id: plan
+        run: |
+          terraform plan -input=false -no-color -out=a_tf_plan
+          terraform show -no-color a_tf_plan > plan.txt
+
+      - name: Display the plan summary
+        id: display
+        run: |
+          {
+            awk '/No changes. Your infrastructure matches the configuration./ {
+              print "## " $0
+              print "Terraform has compared your real infrastructure against your configuration and found no differences, so no changes are needed."
+              exit
+            }' plan.txt
+            awk '/Terraform will perform the following actions:/ {
+              print "## Terraform will perform the following actions:"
+              print "|Action|Resource|"
+              print "|------|--------|"
+              exit
+            }' plan.txt
+            awk '/Terraform used the selected/{ next } /will be/ || /must be/ {print "|" $5 "|" $2 "|"; next} /Plan:/{ print "## " $0; next }' plan.txt \
+              | sed -e 's/created/:white_check_mark: create/' -e 's/destroyed/:bangbang: destroy/' -e 's/replaced/:recycle: replace/'
+          } > plan.md
+          cat plan.md >> $GITHUB_STEP_SUMMARY
+
+      - name: Update PR comments with Plan results
+        if: github.event_name == 'pull_request'
+        id: comment
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.number }}
+          body-path: plan.md

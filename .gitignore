@@ -3,3 +3,8 @@
 
 # To avoid add the Terraform state file or any backups created
 **/terraform.tfstate*
+
+# Other Terraform files to ignore
+*.tfvars
+
+Backups
