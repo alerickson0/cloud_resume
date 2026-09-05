@@ -59,7 +59,7 @@ jobs:
       - name: Display the plan summary
         id: display
         run: |
-          {
+          "{
             awk '/No changes. Your infrastructure matches the configuration./ {
               print "## " $0
               print "Terraform has compared your real infrastructure against your configuration and found no differences, so no changes are needed."
@@ -73,7 +73,7 @@ jobs:
             }' plan.txt
             awk '/Terraform used the selected/{ next } /will be/ || /must be/ {print "|" $5 "|" $2 "|"; next} /Plan:/{ print "## " $0; next }' plan.txt \
               | sed -e 's/created/:white_check_mark: create/' -e 's/destroyed/:bangbang: destroy/' -e 's/replaced/:recycle: replace/'
-          } > plan.md
+          }" > plan.md
           cat plan.md >> $GITHUB_STEP_SUMMARY
 
       - name: Update PR comments with Plan results
